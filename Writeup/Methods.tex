@@ -1,0 +1,76 @@
+\documentclass[a4paper,10pt]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[tbtags]{amsmath}
+\usepackage{graphicx,amssymb,amsfonts,amsthm}
+\usepackage{setspace}
+\usepackage{natbib}
+\usepackage{mathpazo}
+
+\onehalfspacing
+
+\newcommand {\un}[1]{\boldsymbol{#1}}
+\newcommand {\argmin}[1]{\underset{#1}{\mathrm{argmin} \text{ }}}
+
+\begin{document}
+
+\title{\textit{Outline of methods section for Emma's paper}}
+\author{}
+\maketitle
+
+
+\section*{Models considered}
+%
+Empirical models are estimated for the variation of each of 14 geochemical quantities (each of which is represented generically by random variable $Y$) as a function of distance $d \in [0,1800]$ km for five different models. Models are specified which explore the variation of $Y$ with $d$ in increasing complexity. The simplest model (C1C) assumes the existence of a single plume centre (at ***WHERE***), with respect to which $d$ is defined for all three rifts; the variation of $Y$ with $d$ is assumed common to all rifts. Model C3C assumes the existence of three plume centres (at ***WHERE***); observations are allocated to the nearest plume centre, facilitating calculation of a single $d$ for each observation; the variation of $Y$ with $d$ is assumed common to all rifts, regardless of plume allocation. Model C1D assumes one plume centre (like C1C) for calculation of $d$, but now the variation of $Y$ with $d$ is assumed to be different across rifts. Model C3D copies C3C for estimation of $d$, but variation of $Y$ with $d$ is assumed to be different across rifts. Finally, in model C3X we consider the presence of three plume centres, with different variation of $Y$ with $d$ for each combination of plume and rift.
+
+\section*{Penalised B-splines}
+%
+For each model, the variation of $Y$ with $d$ (possibly for a subset of the full sample) is described using a penalised B-spline (e.g. \citealt{ElrMrx96, ElrMrx10}), the characteristics of which are selected to provide optimal predictive performance. First, for a large index set of locations equally spaced on the domain of distance, we calculate a B-spline basis matrix $\un{B}$ (e.g. \citealt{dBr01}) for $p$ equally-spaced cubic spline basis functions. Then the value of $Y$ on the index set is given by the vector $\un{B} \un{\beta}$, for spline coefficient vector $\un{\beta}$ to be estimated. The value of $p$ is specified to be sufficiently large to provide a good description of a highly variable $Y$. For a given data set, we penalise the difference between consecutive values in $\un{\beta}$ using a roughness penalty, such that the penalised spline provides optimal predictive performance.
+
+\section*{Estimating optimal spline roughness and predictive performance}
+%
+For a sample of $n_1$ training data represented by the vectors of geochemical quantities and distances, $\un{y}_1$ and $\un{d}_1$, we first allocate each element of $\un{d}_1$ to its nearest neighbour in the index set, and hence construct the appropriate spline basis matrix $\un{B}_1$ for the sample. We then assume that $\un{y}_1 = \un{B}_1 \un{\beta} + \un{\epsilon}$, where the elements of $\un{\epsilon}$ are independently and identically-distributed zero-mean Gaussian random variables. We penalise the roughness of $\beta$ using a first-different penality $\lambda \un{\beta}' \un{P} \un{\beta}$, where $\un{P}$=$\un{D}'\un{D}$ and $\un{D}$ is a first difference matrix (with elements $D_{ij}=-1$ if $i=j$; $=1$ if $j=i+1$; and $=0$ otherwise;  e.g. \citealt{JnsEA15}). For a given choice of $\lambda$, we then find the optimal value of $\un{\beta}$ by minimising lack of fit
+%
+\begin{eqnarray*}
+	\un{\beta}^*(\lambda) &=& \argmin{\un{\beta}} (\un{y}_1-\un{B}_1 \un{\beta})'(\un{y}_1-\un{B}_1 \un{\beta})' + \lambda \un{\beta}' \un{P} \un{\beta}\\
+	          &=& (\un{B}_1'\un{B}_1+\lambda \un{P})^{-1} \un{B}_1' \un{y}_1 .
+\end{eqnarray*}
+ 
+We can evaluate the predictive performance of the resulting spline description using a tuning set of $n_2$ observations (independent of the training set) represented by vectors $\un{y}_2$ and $\un{d}_2$. We again start by finding the appropriate spline basis matrix $\un{B}_2$ for this sample. Then we can calculate the predictive mean square error for the tuning sample
+%
+\begin{eqnarray*}
+	\text{MSE}_2(\lambda) = \frac{1}{n_2}(\un{y}_2-\un{B}_2 \un{\beta}^*(\lambda))'(\un{y}_2-\un{B}_2 \un{\beta}^*(\lambda))
+\end{eqnarray*}
+%
+for each of a set of representative choices of values for $\lambda$. We can then select the optimal value of $\lambda$ using
+%
+\begin{eqnarray*}
+	\lambda^* &=& \argmin{\lambda} \text{MSE}_2(\lambda).
+\end{eqnarray*}
+
+The value $\text{MSE}_2(\lambda^*)$ is a biased estimate of predictive performance, since the value of $\lambda^*$ was tuned to minimise its value. We can obtain an unbiased estimate for the predictive performance of the spline model using a test set of $n_3$ observations (independent of the training and tuning sets) represented by vectors $\un{y}_3$ and $\un{d}_3$ (and corresponding spline basis matrix $\un{B}_3$). Then the predictive performance is estimated using 
+%
+\begin{eqnarray*}
+	\text{MSE} = \frac{1}{n_3}(\un{y}_3-\un{B}_3 \un{\beta}^*(\lambda^*))'(\un{y}_3-\un{B}_3 \un{\beta}^*(\lambda^*)).
+\end{eqnarray*}
+
+\section*{Cross-validation and model comparison}
+%
+We exploit cross-validation to evaluate $\text{MSE}$, by partitioning the full sample of data into $k>2$ groups at random, withholding one group for tuning, another group for testing, retaining the remaining $k-2$ groups for training. We then loop exhaustively over all possible combinations of choice of train, tune and test groups, evaluating overall predictive performance on the test data over all iterations, noting that each observation occurs exactly once in the test set. For models (C1D, C3D, C3X) requiring separate model fits to subsets of data, $\text{MSE}$ is estimated using predictions from optimal predictive models for each subset. Further, we can repeat the analysis for different initial random partitioning of observations into $k$ groups, to assess the sensitivity of overall predictive performance to this choice. We are careful to use the same cross-validation partitions to evaluate each of the five models, so that predictive performances can be compared fairly.
+
+To quantify model performance over all 14 geochemical quantities, we define the overall standardised MSE
+%
+\begin{eqnarray*}
+	\text{SMSE} = \sum_{j=1}^{14} \frac{\text{MSE}_j}{s_j^2}
+\end{eqnarray*}
+%
+where $\text{MSE}_j$ is the predictive performance for the $j^{\text{th}}$ quantity, and $s_j^2$ is the sample estimate for the variance of that quantity.
+
+\section*{Linear regression}
+%
+For comparison, we also evaluate linear regression models for the variation of $Y$ with $d$. In the current notation, these can be thought of as simple models with basis matrix $\un{B}=[\un{1} \quad \un{d}]$, where $\un{1}$ is a vector of appropriate length with each element $=1$. $\un{\beta}$ in this case is a 2-vector with elements corresponding to intercept and slope coefficients. Linear regression is approached using penalised B-spline models as the roughness coefficient $\lambda \rightarrow \infty$. That is, linear regression corresponds to a penalised B-spline model with very large $\lambda$. Therefore, a penalised B-spline model is guaranteed to perform at least as well as linear regression.
+
+
+\bibliographystyle{plainnat}
+\bibliography{C:/Users/Philip.Jonathan/PhilipGit/Code/LaTeX/Phil}
+
+\end{document}

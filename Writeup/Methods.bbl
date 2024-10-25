@@ -1,0 +1,31 @@
+\begin{thebibliography}{4}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[de~Boor(2001)]{dBr01}
+C.~de~Boor.
+\newblock \emph{A practical guide to splines}.
+\newblock Springer-Verlag, New York (Applied Mathematical Sciences Revised
+  Edition), 2001.
+
+\bibitem[Eilers and Marx(2010)]{ElrMrx10}
+P.~H.~C. Eilers and B.~D. Marx.
+\newblock Splines, knots and penalties.
+\newblock \emph{Wiley Interscience Reviews: Computational Statistics},
+  {2}:\penalty0 {637--653}, 2010.
+
+\bibitem[Eilers and Marx(1996)]{ElrMrx96}
+P.~H.C. Eilers and B.~D. Marx.
+\newblock Flexible smoothing with b-splines and penalties.
+\newblock \emph{Stat. Sci.}, 11:\penalty0 89--102, 1996.
+
+\bibitem[Jones et~al.(2016)Jones, Randell, Ewans, and Jonathan]{JnsEA15}
+M.~Jones, D.~Randell, K.~Ewans, and P.~Jonathan.
+\newblock Statistics of extreme ocean environments: non-stationary inference
+  for directionality and other covariate effects.
+\newblock \emph{Ocean Eng.}, 119:\penalty0 30--46, 2016.
+
+\end{thebibliography}
